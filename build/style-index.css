@@ -1,0 +1,27 @@
+/*!***************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]!./src/style.scss ***!
+  \***************************************************************************************************************************************************************************************************************************************/
+.wpfy-faq-panel {
+  background: rgba(252, 252, 252, 0.6196078431);
+  padding: 20px;
+  border: 1px solid #b7b7b7;
+  border-radius: 3px;
+}
+.wpfy-faq-panel .faq-outer {
+  background: rgba(220, 220, 220, 0.1490196078);
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid rgba(128, 128, 128, 0.3607843137);
+  position: relative;
+}
+.wpfy-faq-panel .faq-outer .faq-delete {
+  position: absolute;
+  right: 0;
+  top: 0;
+  color: gray;
+}
+.wpfy-faq-panel .faq-outer .faq-delete:hover {
+  color: #ef0b0b;
+}
+
+/*# sourceMappingURL=style-index.css.map*/

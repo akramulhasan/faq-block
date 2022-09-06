@@ -1,0 +1,23 @@
+.wpfy-faq-panel {
+  background: #fcfcfc9e;
+  padding: 20px;
+  border: 1px solid #b7b7b7;
+  border-radius: 3px;
+  .faq-outer {
+    background: #dcdcdc26;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #8080805c;
+    position: relative;
+
+    .faq-delete {
+      position: absolute;
+      right: 0;
+      top: 0;
+      color: gray;
+    }
+    .faq-delete:hover {
+      color: #ef0b0b;
+    }
+  }
+}

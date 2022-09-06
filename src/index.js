@@ -1,4 +1,10 @@
-import { TextControl, TextareaControl, Button } from "@wordpress/components";
+import {
+  TextControl,
+  TextareaControl,
+  Button,
+  Icon,
+} from "@wordpress/components";
+import "./style.scss";
 wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
   title: "WPFY FAQ Block",
   icon: "align-wide",
@@ -20,7 +26,10 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
     return (
       <div className="wpfy-faq-panel">
         {props.attributes.faqs.map((faq, index) => (
-          <>
+          <div className="faq-outer">
+            <Button className="faq-delete">
+              <Icon icon="trash" />
+            </Button>
             <TextControl
               value={faq.q}
               onChange={(newValue) => {
@@ -39,7 +48,7 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
               }}
               label="Answer"
             />
-          </>
+          </div>
         ))}
         <Button
           onClick={() => {
@@ -47,7 +56,7 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
           }}
           variant="primary"
         >
-          Add FAQ
+          + Add FAQ
         </Button>
       </div>
     );

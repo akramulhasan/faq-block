@@ -12,9 +12,11 @@ class WPFY_FAQ{
     }
 
     function adminAssets(){
-        wp_register_script('test-js', plugin_dir_url(__FILE__).'/build/index.js',array('wp-blocks','wp-element','wp-editor'));
+        wp_register_style('maincss', plugin_dir_url(__FILE__).'/build/style-index.css');
+        wp_register_script('mainjs', plugin_dir_url(__FILE__).'/build/index.js',array('wp-blocks','wp-element','wp-editor'));
         register_block_type('wpfyfaq/wpfy-faq-block',array(
-            'editor_script'=> 'test-js',
+            'editor_script'=> 'mainjs',
+            'editor_style'=> 'maincss',
             'render_callback' => array($this, 'theHTML')
         ) );
         
