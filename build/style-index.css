@@ -23,5 +23,9 @@
 .wpfy-faq-panel .faq-outer .faq-delete:hover {
   color: #ef0b0b;
 }
+.wpfy-faq-panel .faq-outer .wpfy-faq-input label {
+  font-size: 16px;
+  font-weight: 500;
+}
 
 /*# sourceMappingURL=style-index.css.map*/

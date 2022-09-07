@@ -5,6 +5,14 @@ import {
   Icon,
 } from "@wordpress/components";
 import "./style.scss";
+
+function trackEditorChanges() {
+  wp.data.subscribe(function () {
+    console.log("hello");
+  });
+}
+trackEditorChanges();
+
 wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
   title: "WPFY FAQ Block",
   icon: "align-wide",
@@ -16,18 +24,19 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
     },
   },
   edit: function (props) {
-    function updateQuestion(value) {
-      props.setAttributes({ question: value });
-    }
-    function updateAnswer(value) {
-      props.setAttributes({ answer: value });
+    function deleteFaq(indexToDelete) {
+      const copyOfFaqsArr = [...props.attributes.faqs];
+      const afterDeleteArr = copyOfFaqsArr.filter((faq, index) => {
+        return indexToDelete != index;
+      });
+      props.setAttributes({ faqs: afterDeleteArr });
     }
     //console.log(props.attributes.faqs[0].q);
     return (
       <div className="wpfy-faq-panel">
         {props.attributes.faqs.map((faq, index) => (
           <div className="faq-outer">
-            <Button className="faq-delete">
+            <Button onClick={() => deleteFaq(index)} className="faq-delete">
               <Icon icon="trash" />
             </Button>
             <TextControl
@@ -38,6 +47,8 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
                 props.setAttributes({ faqs: copyOfFaqsArr });
               }}
               label="Question"
+              className="wpfy-faq-input"
+              autoFocus={faq.q == undefined}
             />
             <TextareaControl
               value={faq.a}
@@ -47,12 +58,17 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
                 props.setAttributes({ faqs: copyOfFaqsArr });
               }}
               label="Answer"
+              className="wpfy-faq-input"
             />
           </div>
         ))}
         <Button
           onClick={() => {
-            props.setAttributes({ faqs: props.attributes.faqs.concat([{}]) });
+            props.setAttributes({
+              faqs: props.attributes.faqs.concat([
+                { q: undefined, a: undefined },
+              ]),
+            });
           }}
           variant="primary"
         >

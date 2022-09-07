@@ -17,6 +17,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+function trackEditorChanges() {
+  wp.data.subscribe(function () {
+    console.log("hello");
+  });
+}
+
+trackEditorChanges();
 wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
   title: "WPFY FAQ Block",
   icon: "align-wide",
@@ -28,15 +36,13 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
     }
   },
   edit: function (props) {
-    function updateQuestion(value) {
-      props.setAttributes({
-        question: value
+    function deleteFaq(indexToDelete) {
+      const copyOfFaqsArr = [...props.attributes.faqs];
+      const afterDeleteArr = copyOfFaqsArr.filter((faq, index) => {
+        return indexToDelete != index;
       });
-    }
-
-    function updateAnswer(value) {
       props.setAttributes({
-        answer: value
+        faqs: afterDeleteArr
       });
     } //console.log(props.attributes.faqs[0].q);
 
@@ -46,6 +52,7 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
     }, props.attributes.faqs.map((faq, index) => (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "faq-outer"
     }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+      onClick: () => deleteFaq(index),
       className: "faq-delete"
     }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Icon, {
       icon: "trash"
@@ -58,7 +65,9 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
           faqs: copyOfFaqsArr
         });
       },
-      label: "Question"
+      label: "Question",
+      className: "wpfy-faq-input",
+      autoFocus: faq.q == undefined
     }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.TextareaControl, {
       value: faq.a,
       onChange: newValue => {
@@ -68,11 +77,15 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
           faqs: copyOfFaqsArr
         });
       },
-      label: "Answer"
+      label: "Answer",
+      className: "wpfy-faq-input"
     }))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
       onClick: () => {
         props.setAttributes({
-          faqs: props.attributes.faqs.concat([{}])
+          faqs: props.attributes.faqs.concat([{
+            q: undefined,
+            a: undefined
+          }])
         });
       },
       variant: "primary"
