@@ -19,8 +19,27 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function trackEditorChanges() {
+  let locked = false;
   wp.data.subscribe(function () {
-    console.log("hello");
+    function isUndefined(faqs) {
+      return faqs.some(function (faq) {
+        return faq.q == undefined || faq.a == undefined;
+      });
+    }
+
+    const results = wp.data.select("core/block-editor").getBlocks().filter(function (block) {
+      return block.name == "wpfyfaq/wpfy-faq-block" && isUndefined(block.attributes.faqs);
+    });
+
+    if (results.length && locked == false) {
+      locked = true;
+      wp.data.dispatch("core/editor").lockPostSaving("no-faq-data");
+    }
+
+    if (!results.length && locked) {
+      locked = false;
+      wp.data.dispatch("core/editor").unlockPostSaving("no-faq-data");
+    }
   });
 }
 
@@ -32,10 +51,52 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
   attributes: {
     faqs: {
       type: "array",
-      default: [{}]
+      default: [{
+        q: undefined,
+        a: undefined
+      }]
     }
   },
   edit: function (props) {
+    //Method to update question event
+    function updateQuestion(newValue, indexToUpdate) {
+      //Check if input has something
+      if (newValue.length) {
+        //Update atts quesiton with new value
+        const copyOfFaqsArr = [...props.attributes.faqs];
+        copyOfFaqsArr[indexToUpdate].q = newValue;
+        props.setAttributes({
+          faqs: copyOfFaqsArr
+        });
+      } else {
+        // set atts question value to undefined
+        const copyOfFaqsArr = [...props.attributes.faqs];
+        copyOfFaqsArr[indexToUpdate].q = undefined;
+        props.setAttributes({
+          faqs: copyOfFaqsArr
+        });
+      }
+    } //Method to update answer event
+
+
+    function updateAnswer(newValue, indexToUpdate) {
+      //Update atts answer with new value
+      if (newValue.length) {
+        const copyOfFaqsArr = [...props.attributes.faqs];
+        copyOfFaqsArr[indexToUpdate].a = newValue;
+        props.setAttributes({
+          faqs: copyOfFaqsArr
+        });
+      } else {
+        // Set atts answer value to undefined
+        const copyOfFaqsArr = [...props.attributes.faqs];
+        copyOfFaqsArr[indexToUpdate].a = undefined;
+        props.setAttributes({
+          faqs: copyOfFaqsArr
+        });
+      }
+    }
+
     function deleteFaq(indexToDelete) {
       const copyOfFaqsArr = [...props.attributes.faqs];
       const afterDeleteArr = copyOfFaqsArr.filter((faq, index) => {
@@ -44,8 +105,7 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
       props.setAttributes({
         faqs: afterDeleteArr
       });
-    } //console.log(props.attributes.faqs[0].q);
-
+    }
 
     return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "wpfy-faq-panel"
@@ -57,26 +117,15 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
     }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Icon, {
       icon: "trash"
     })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.TextControl, {
-      value: faq.q,
-      onChange: newValue => {
-        const copyOfFaqsArr = [...props.attributes.faqs];
-        copyOfFaqsArr[index].q = newValue;
-        props.setAttributes({
-          faqs: copyOfFaqsArr
-        });
-      },
+      value: faq.q // onChange={(newValue) => {}
+      ,
+      onChange: newValue => updateQuestion(newValue, index),
       label: "Question",
       className: "wpfy-faq-input",
       autoFocus: faq.q == undefined
     }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.TextareaControl, {
       value: faq.a,
-      onChange: newValue => {
-        const copyOfFaqsArr = [...props.attributes.faqs];
-        copyOfFaqsArr[index].a = newValue;
-        props.setAttributes({
-          faqs: copyOfFaqsArr
-        });
-      },
+      onChange: newValue => updateAnswer(newValue, index),
       label: "Answer",
       className: "wpfy-faq-input"
     }))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {

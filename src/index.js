@@ -7,8 +7,32 @@ import {
 import "./style.scss";
 
 function trackEditorChanges() {
+  let locked = false;
   wp.data.subscribe(function () {
-    console.log("hello");
+    function isUndefined(faqs) {
+      return faqs.some(function (faq) {
+        return faq.q == undefined || faq.a == undefined;
+      });
+    }
+
+    const results = wp.data
+      .select("core/block-editor")
+      .getBlocks()
+      .filter(function (block) {
+        return (
+          block.name == "wpfyfaq/wpfy-faq-block" &&
+          isUndefined(block.attributes.faqs)
+        );
+      });
+
+    if (results.length && locked == false) {
+      locked = true;
+      wp.data.dispatch("core/editor").lockPostSaving("no-faq-data");
+    }
+    if (!results.length && locked) {
+      locked = false;
+      wp.data.dispatch("core/editor").unlockPostSaving("no-faq-data");
+    }
   });
 }
 trackEditorChanges();
@@ -20,10 +44,40 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
   attributes: {
     faqs: {
       type: "array",
-      default: [{}],
+      default: [{ q: undefined, a: undefined }],
     },
   },
   edit: function (props) {
+    //Method to update question event
+    function updateQuestion(newValue, indexToUpdate) {
+      //Check if input has something
+      if (newValue.length) {
+        //Update atts quesiton with new value
+        const copyOfFaqsArr = [...props.attributes.faqs];
+        copyOfFaqsArr[indexToUpdate].q = newValue;
+        props.setAttributes({ faqs: copyOfFaqsArr });
+      } else {
+        // set atts question value to undefined
+        const copyOfFaqsArr = [...props.attributes.faqs];
+        copyOfFaqsArr[indexToUpdate].q = undefined;
+        props.setAttributes({ faqs: copyOfFaqsArr });
+      }
+    }
+
+    //Method to update answer event
+    function updateAnswer(newValue, indexToUpdate) {
+      //Update atts answer with new value
+      if (newValue.length) {
+        const copyOfFaqsArr = [...props.attributes.faqs];
+        copyOfFaqsArr[indexToUpdate].a = newValue;
+        props.setAttributes({ faqs: copyOfFaqsArr });
+      } else {
+        // Set atts answer value to undefined
+        const copyOfFaqsArr = [...props.attributes.faqs];
+        copyOfFaqsArr[indexToUpdate].a = undefined;
+        props.setAttributes({ faqs: copyOfFaqsArr });
+      }
+    }
     function deleteFaq(indexToDelete) {
       const copyOfFaqsArr = [...props.attributes.faqs];
       const afterDeleteArr = copyOfFaqsArr.filter((faq, index) => {
@@ -31,7 +85,6 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
       });
       props.setAttributes({ faqs: afterDeleteArr });
     }
-    //console.log(props.attributes.faqs[0].q);
     return (
       <div className="wpfy-faq-panel">
         {props.attributes.faqs.map((faq, index) => (
@@ -41,22 +94,15 @@ wp.blocks.registerBlockType("wpfyfaq/wpfy-faq-block", {
             </Button>
             <TextControl
               value={faq.q}
-              onChange={(newValue) => {
-                const copyOfFaqsArr = [...props.attributes.faqs];
-                copyOfFaqsArr[index].q = newValue;
-                props.setAttributes({ faqs: copyOfFaqsArr });
-              }}
+              // onChange={(newValue) => {}
+              onChange={(newValue) => updateQuestion(newValue, index)}
               label="Question"
               className="wpfy-faq-input"
               autoFocus={faq.q == undefined}
             />
             <TextareaControl
               value={faq.a}
-              onChange={(newValue) => {
-                const copyOfFaqsArr = [...props.attributes.faqs];
-                copyOfFaqsArr[index].a = newValue;
-                props.setAttributes({ faqs: copyOfFaqsArr });
-              }}
+              onChange={(newValue) => updateAnswer(newValue, index)}
               label="Answer"
               className="wpfy-faq-input"
             />
