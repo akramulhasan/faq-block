@@ -1,0 +1,56 @@
+.wpfy-faqs-wrapper {
+  // background: #c8c8c882;
+  // padding: 15px;
+}
+.wpfy-faq {
+  border: 1px solid gray;
+  border-bottom: none;
+}
+.wpfy-faq:first-child {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.wpfy-faq:last-child {
+  border-bottom: 1px solid gray;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.question-pan {
+  position: relative;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.question-pan h4 {
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+}
+.question-pan button {
+  line-height: 15px;
+  padding: 0;
+  font-size: 25px;
+  font-weight: bold;
+  height: 30px;
+  width: 30px;
+  text-decoration: none;
+  color: #000000;
+  background: none;
+}
+.ans-pan {
+  padding: 15px;
+  background: #32373c17;
+}
+
+@keyframes fadeMe {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

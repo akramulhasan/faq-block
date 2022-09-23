@@ -9,6 +9,7 @@ import "./style.scss";
 function trackEditorChanges() {
   let locked = false;
   wp.data.subscribe(function () {
+    //Functon to check is there any Q/A is not filled up
     function isUndefined(faqs) {
       return faqs.some(function (faq) {
         return faq.q == undefined || faq.a == undefined;
@@ -24,7 +25,7 @@ function trackEditorChanges() {
           isUndefined(block.attributes.faqs)
         );
       });
-
+    //If there is any undefined FAQ available in the editor, lock the 'update' button
     if (results.length && locked == false) {
       locked = true;
       wp.data.dispatch("core/editor").lockPostSaving("no-faq-data");

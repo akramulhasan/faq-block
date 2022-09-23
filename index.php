@@ -23,13 +23,20 @@ class WPFY_FAQ{
     }
 
     function theHTML($attributes){
-        //var_dump($attributes);
+        if(!is_admin()){
+            wp_enqueue_script('frontendjs', plugin_dir_url(__FILE__ ).'build/frontend.js', array('wp-element'), null, true);
+            wp_enqueue_style('frontendcss', plugin_dir_url(__FILE__).'build/frontend.css');
+        }
         ob_start(); ?>
-        <div>
-            <h3>Hello I am output</h3>
-            <!-- <h3>Q: <?php echo esc_html($attributes['question']); ?></h3>
-            <p>A: <?php echo esc_html($attributes['answer']); ?></p> -->
+        <div class="wpfy-faq-update-me">
+            <?php 
+            echo '<pre style="display:none">';
+                echo wp_json_encode($attributes);
+            echo '</pre>';
+            ?>
         </div>
+
+
         <?php return ob_get_clean();
         // return '<p>This is the new output form php file with sky color '.esc_attr($attributes['skyColor']).' and grass color is '.$attributes['grassColor'].'<p>';
     }
